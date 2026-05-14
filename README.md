@@ -4,6 +4,24 @@ This repository is a personal sandbox for starting unrelated app or tool ideas f
 
 The user is not a programmer. When the user asks for something here, assume they want Codex to choose a simple implementation path, create the files, and explain only the minimum steps needed to run or review it.
 
+## Most Important Habit
+
+When the user starts a new idea from iPhone, they should name a folder under `ideas/` in the request.
+
+Use this pattern:
+
+```text
+ideas/<idea-name> に <作りたいもの> を作って
+```
+
+Examples:
+
+```text
+ideas/weight-meal-tracker に体重と食事管理アプリを作って
+ideas/english-flashcards に英単語暗記アプリを作って
+ideas/simple-invoice に簡単な請求書作成ツールを作って
+```
+
 ## How To Work In This Repository
 
 - Put each unrelated idea in its own folder under `ideas/`.

@@ -38,9 +38,12 @@ GitHub Pagesで見られる静的HTML/CSS/JavaScriptにしてください
 4. After Codex finishes, tap the GitHub icon menu.
 5. Create a pull request.
 6. Open the pull request.
-7. Tap `Merge pull request`.
-8. Tap `Confirm merge`.
-9. Open the GitHub Pages URL.
+7. Make sure GitHub is logged in on the iPhone browser.
+8. Tap `Merge pull request`.
+9. Tap `Confirm merge`.
+10. Open the GitHub Pages URL.
+
+If `Merge pull request` is not visible, the iPhone browser may not be logged in to GitHub. Log in to GitHub, then reopen the pull request.
 
 The URL pattern is:
 

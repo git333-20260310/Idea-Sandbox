@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Tap Counter</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-label="タップカウンター">
+      <h1 class="title">Tap Counter</h1>
+      <p class="subtitle">ボタンを押すたびに増える</p>
+
+      <output id="count" class="count" aria-live="polite">0</output>
+
+      <button id="tapButton" class="tap-button" type="button">タップ +1</button>
+      <button id="resetButton" class="reset-button" type="button">リセット</button>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -22,6 +22,38 @@ ideas/english-flashcards に英単語暗記アプリを作って
 ideas/simple-invoice に簡単な請求書作成ツールを作って
 ```
 
+## iPhone Workflow
+
+Repeat this flow when starting a new idea from iPhone:
+
+1. Open Codex Web on iPhone.
+2. Select the `Idea-Sandbox` repository.
+3. Ask Codex with this pattern:
+
+```text
+ideas/<idea-name> に <作りたいもの> を作って
+GitHub Pagesで見られる静的HTML/CSS/JavaScriptにしてください
+```
+
+4. After Codex finishes, tap the GitHub icon menu.
+5. Create a pull request.
+6. Open the pull request.
+7. Tap `Merge pull request`.
+8. Tap `Confirm merge`.
+9. Open the GitHub Pages URL.
+
+The URL pattern is:
+
+```text
+https://git333-20260310.github.io/Idea-Sandbox/ideas/<idea-name>/
+```
+
+Example:
+
+```text
+https://git333-20260310.github.io/Idea-Sandbox/ideas/first-test-page/
+```
+
 ## How To Work In This Repository
 
 - Put each unrelated idea in its own folder under `ideas/`.

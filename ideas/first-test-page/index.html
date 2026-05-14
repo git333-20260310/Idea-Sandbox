@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Idea-Sandbox test page</title>
+    <style>
+      :root {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #111827;
+        background: #f9fafb;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+      }
+
+      main {
+        width: min(92vw, 480px);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+        padding: 24px;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 1.6rem;
+      }
+
+      p {
+        margin: 8px 0;
+      }
+
+      button {
+        margin-top: 16px;
+        padding: 10px 16px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        background: #2563eb;
+        color: white;
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Idea-Sandbox test</h1>
+      <p id="today"></p>
+      <p id="message">Button not pressed yet.</p>
+      <button id="toggleButton" type="button">Tap me</button>
+    </main>
+
+    <script>
+      const todayElement = document.getElementById("today");
+      const messageElement = document.getElementById("message");
+      const toggleButton = document.getElementById("toggleButton");
+
+      const now = new Date();
+      todayElement.textContent = `Today: ${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+      let toggled = false;
+      toggleButton.addEventListener("click", () => {
+        toggled = !toggled;
+        messageElement.textContent = toggled
+          ? "Button pressed! Text changed."
+          : "Button not pressed yet.";
+      });
+    </script>
+  </body>
+</html>

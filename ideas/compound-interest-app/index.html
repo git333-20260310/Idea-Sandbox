@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>複利計算アプリ</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <h1>複利計算アプリ</h1>
+      <p class="subtitle">初期資金・積立・年利から将来資産をざっくり試算します。</p>
+
+      <form id="calculator-form" class="card">
+        <label>
+          初期資金（円）
+          <input type="number" id="principal" min="0" step="1000" value="100000" required />
+        </label>
+        <label>
+          毎月の積立額（円）
+          <input type="number" id="monthlyContribution" min="0" step="1000" value="30000" required />
+        </label>
+        <label>
+          年利（%）
+          <input type="number" id="annualRate" min="0" step="0.1" value="5" required />
+        </label>
+        <label>
+          運用期間（年）
+          <input type="number" id="years" min="1" max="60" step="1" value="20" required />
+        </label>
+        <label>
+          複利の頻度
+          <select id="compoundFrequency">
+            <option value="12" selected>毎月</option>
+            <option value="4">四半期</option>
+            <option value="2">半年</option>
+            <option value="1">年1回</option>
+          </select>
+        </label>
+        <label>
+          積立タイミング
+          <select id="contributionTiming">
+            <option value="end" selected>月末（後払い）</option>
+            <option value="beginning">月初（先払い）</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <button type="submit">計算する</button>
+          <button type="button" id="reset-button" class="secondary">初期値に戻す</button>
+        </div>
+      </form>
+
+      <section class="card" id="result" aria-live="polite">
+        <h2>計算結果</h2>
+        <p class="result-amount" id="futureValue">-</p>
+        <div class="result-grid">
+          <p>元本 + 積立総額: <strong id="totalContributions">-</strong></p>
+          <p>運用益: <strong id="totalInterest">-</strong></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>年ごとの推移</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>年</th>
+                <th>評価額</th>
+              </tr>
+            </thead>
+            <tbody id="yearlyRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

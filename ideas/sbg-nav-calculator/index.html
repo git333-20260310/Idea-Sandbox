@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SBG NAV Calculator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <p class="eyebrow">SoftBank Group NAV quick estimate</p>
+      <h1>SBGの最新NAVをざっくり計算</h1>
+      <p>公式NAVをベースに、主要上場持分の株価と為替を反映して1株あたりNAVを試算します。</p>
+      <div class="actions">
+        <button id="fetchPrices">最新価格を取得</button>
+        <button id="recalculate" class="secondary">NAVを再計算</button>
+      </div>
+      <p id="status" class="status">初期値を読み込みました。</p>
+    </section>
+
+    <section class="cards results">
+      <article>
+        <span>推定NAV / 株</span>
+        <strong id="navPerShare">--</strong>
+      </article>
+      <article>
+        <span>NAV総額</span>
+        <strong id="navTotal">--</strong>
+      </article>
+      <article>
+        <span>推定LTV</span>
+        <strong id="ltv">--</strong>
+      </article>
+      <article>
+        <span>SBG株価との乖離</span>
+        <strong id="discount">--</strong>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>前提条件</h2>
+      <div class="grid form-grid">
+        <label>ベースライン日<input id="baseDate" value="2026-03-31"></label>
+        <label>公式NAV/株（円）<input id="baseNavPerShare" type="number" value="7029"></label>
+        <label>発行済株式数（百万株）<input id="sharesOut" type="number" value="4260"></label>
+        <label>純有利子負債（十億円）<input id="netDebt" type="number" value="6140"></label>
+        <label>SBG現在株価（円）<input id="sbgPrice" type="number" value="3555"></label>
+        <label>USD/JPY<input id="usdJpy" type="number" step="0.01" value="151.00"></label>
+        <label>EUR/JPY<input id="eurJpy" type="number" step="0.01" value="163.00"></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <h2>主要上場持分</h2>
+        <small>株数は百万株、価値は十億円で計算</small>
+      </div>
+      <div id="holdings" class="holdings"></div>
+    </section>
+
+    <section class="panel note">
+      <h2>計算式</h2>
+      <p>資産価値 = Σ（株数 × 株価 × 為替） + その他資産。NAV = 資産価値 - 純有利子負債。NAV/株 = NAV ÷ 発行済株式数。</p>
+      <p>公式IRの期末NAVから、ここにない資産は「その他資産」として逆算し固定しています。正確な最新NAVではなく、日次の概算を見るためのツールです。</p>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

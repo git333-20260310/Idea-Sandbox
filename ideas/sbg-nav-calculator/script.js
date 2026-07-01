@@ -8,8 +8,15 @@ const holdings = [
 
 const els = {
   holdings: document.querySelector('#holdings'), status: document.querySelector('#status'),
-  navPerShare: document.querySelector('#navPerShare'), navTotal: document.querySelector('#navTotal'),
-  ltv: document.querySelector('#ltv'), discount: document.querySelector('#discount'),
+  officialDateLabel: document.querySelector('#officialDateLabel'),
+  officialNavPerShare: document.querySelector('#officialNavPerShare'),
+  officialNavTotal: document.querySelector('#officialNavTotal'),
+  officialLtv: document.querySelector('#officialLtv'),
+  officialDiscount: document.querySelector('#officialDiscount'),
+  liveNavPerShare: document.querySelector('#liveNavPerShare'),
+  liveNavTotal: document.querySelector('#liveNavTotal'),
+  liveLtv: document.querySelector('#liveLtv'),
+  liveDiscount: document.querySelector('#liveDiscount'),
 };
 
 const input = id => document.querySelector(`#${id}`);
@@ -24,8 +31,8 @@ function renderHoldings() {
       <label>株数（百万）<input data-i="${i}" data-k="shares" type="number" step="0.1" value="${h.shares}"></label>
       <label>基準株価<input data-i="${i}" data-k="basePrice" type="number" step="0.01" value="${h.basePrice}"></label>
       <label>現在株価<input data-i="${i}" data-k="price" type="number" step="0.01" value="${h.price ?? h.basePrice}"></label>
-      <label>基準価値（十億円）<input data-i="${i}" data-k="baseValue" type="number" readonly value="${holdingValue(h, h.basePrice).toFixed(0)}"></label>
-      <label>現在価値（十億円）<input data-i="${i}" data-k="value" type="number" readonly value="${holdingValue(h, h.price ?? h.basePrice).toFixed(0)}"></label>
+      <label>公式時点価値（十億円）<input data-i="${i}" data-k="baseValue" type="number" readonly value="${holdingValue(h, h.basePrice).toFixed(0)}"></label>
+      <label>現状反映価値（十億円）<input data-i="${i}" data-k="value" type="number" readonly value="${holdingValue(h, h.price ?? h.basePrice).toFixed(0)}"></label>
     </div>`).join('');
 
   els.holdings.querySelectorAll('input:not([readonly])').forEach(el => {
@@ -47,16 +54,24 @@ function recalculate(rerender = true) {
   const baseListed = holdings.reduce((sum, h) => sum + holdingValue(h, h.basePrice), 0);
   const currentListed = holdings.reduce((sum, h) => sum + holdingValue(h, h.price ?? h.basePrice), 0);
   const otherAssets = baseNav + netDebt - baseListed;
-  const assetValue = currentListed + otherAssets;
-  const nav = assetValue - netDebt;
-  const navPerShare = nav * 1000 / Number(input('sharesOut').value);
-  const ltv = netDebt / assetValue * 100;
-  const discount = (Number(input('sbgPrice').value) / navPerShare - 1) * 100;
+  const officialAssetValue = baseListed + otherAssets;
+  const liveAssetValue = currentListed + otherAssets;
+  const liveNav = liveAssetValue - netDebt;
+  const liveNavPerShare = liveNav * 1000 / Number(input('sharesOut').value);
+  const officialLtv = netDebt / officialAssetValue * 100;
+  const liveLtv = netDebt / liveAssetValue * 100;
+  const officialDiscount = (Number(input('sbgPrice').value) / Number(input('baseNavPerShare').value) - 1) * 100;
+  const liveDiscount = (Number(input('sbgPrice').value) / liveNavPerShare - 1) * 100;
 
-  els.navPerShare.textContent = `${yen(navPerShare)}円`;
-  els.navTotal.textContent = `${(nav / 1000).toFixed(1)}兆円`;
-  els.ltv.textContent = pct(ltv);
-  els.discount.textContent = pct(discount);
+  els.officialDateLabel.textContent = input('baseDate').value;
+  els.officialNavPerShare.textContent = `${yen(Number(input('baseNavPerShare').value))}円`;
+  els.officialNavTotal.textContent = `${(baseNav / 1000).toFixed(1)}兆円`;
+  els.officialLtv.textContent = pct(officialLtv);
+  els.officialDiscount.textContent = pct(officialDiscount);
+  els.liveNavPerShare.textContent = `${yen(liveNavPerShare)}円`;
+  els.liveNavTotal.textContent = `${(liveNav / 1000).toFixed(1)}兆円`;
+  els.liveLtv.textContent = pct(liveLtv);
+  els.liveDiscount.textContent = pct(liveDiscount);
   if (rerender) renderHoldings();
 }
 

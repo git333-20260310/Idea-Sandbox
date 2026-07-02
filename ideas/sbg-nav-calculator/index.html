@@ -4,7 +4,127 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SBG NAV Official / Live v2</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+:root {
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f4f7fb;
+  color: #172033;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+.app { max-width: 1080px; margin: 0 auto; padding: 20px; }
+.hero {
+  margin: 18px 0 16px;
+  padding: 28px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #14213d, #3056d3);
+  color: white;
+  box-shadow: 0 18px 40px rgba(20, 33, 61, .18);
+}
+.eyebrow { margin: 0 0 8px; color: #bcd2ff; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 12px; }
+h1 { margin: 0; font-size: clamp(30px, 7vw, 58px); line-height: 1.02; }
+h2 { margin: 0 0 16px; }
+.hero p { max-width: 720px; line-height: 1.7; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+button {
+  border: 0; border-radius: 999px; padding: 13px 18px; font-weight: 800;
+  background: #ffcf33; color: #172033; cursor: pointer; font-size: 16px;
+}
+button.secondary { background: rgba(255,255,255,.16); color: white; border: 1px solid rgba(255,255,255,.35); }
+.status { color: #dce7ff; font-size: 14px; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.cards article, .panel {
+  background: rgba(255,255,255,.92); border: 1px solid #e4e9f2; border-radius: 22px;
+  box-shadow: 0 10px 28px rgba(23, 32, 51, .07);
+}
+.cards article { padding: 18px; }
+.cards span { display: block; color: #66728a; font-size: 13px; margin-bottom: 8px; }
+.cards strong { font-size: clamp(22px, 4vw, 34px); }
+.panel { padding: 20px; margin-top: 14px; }
+.grid { display: grid; gap: 12px; }
+.form-grid { grid-template-columns: repeat(4, 1fr); }
+label { display: grid; gap: 7px; color: #566176; font-size: 13px; font-weight: 700; }
+input {
+  width: 100%; border: 1px solid #d8deea; border-radius: 14px; padding: 12px;
+  font: inherit; background: #fbfcff; color: #172033;
+}
+.section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.section-title small { color: #7c879a; }
+.holdings { display: grid; gap: 10px; }
+.holding {
+  display: grid; grid-template-columns: 1.3fr .8fr .8fr .8fr .8fr .9fr; gap: 10px;
+  padding: 12px; border-radius: 18px; background: #f8faff; border: 1px solid #e7edf8;
+}
+.holding h3 { margin: 0; font-size: 16px; }
+.holding .meta { color: #7c879a; font-size: 12px; margin-top: 4px; }
+.note p { color: #58647a; line-height: 1.7; }
+
+@media (max-width: 840px) {
+  .cards, .form-grid { grid-template-columns: repeat(2, 1fr); }
+  .holding { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  .app { padding: 12px; }
+  .hero { padding: 22px; border-radius: 22px; }
+  .cards { grid-template-columns: 1fr; }
+}
+
+.nav-stack { display: grid; gap: 14px; margin: 16px 0; }
+.nav-card {
+  padding: 22px;
+  border-radius: 26px;
+  border: 1px solid #e4e9f2;
+  box-shadow: 0 12px 32px rgba(23, 32, 51, .08);
+}
+.official-card { background: linear-gradient(180deg, #ffffff, #f5f8ff); }
+.live-card { background: linear-gradient(180deg, #eff6ff, #ffffff); border-color: #cfe0ff; }
+.card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.card-heading span { color: #66728a; font-size: 13px; font-weight: 800; }
+.eyebrow.dark { color: #3056d3; margin: 0; }
+.main-metric { display: grid; gap: 6px; margin-bottom: 16px; }
+.main-metric span, .metric-grid span { color: #66728a; font-size: 13px; font-weight: 700; }
+.main-metric strong { font-size: clamp(38px, 11vw, 76px); line-height: .95; letter-spacing: -.05em; }
+.metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.metric-grid div { padding: 14px; border-radius: 18px; background: rgba(255,255,255,.78); border: 1px solid #e4e9f2; }
+.metric-grid strong { display: block; margin-top: 6px; font-size: clamp(20px, 4vw, 30px); }
+
+@media (max-width: 840px) {
+  .metric-grid { grid-template-columns: 1fr; }
+}
+
+.bucket-list, .adjustment-list, .future-list { display: grid; gap: 10px; }
+.bucket-card, .adjustment-row, .future-row {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #f8faff;
+  border: 1px solid #e7edf8;
+}
+.bucket-card { grid-template-columns: 1fr minmax(150px, .24fr); align-items: center; }
+.bucket-card h3, .adjustment-row h3, .future-row h3 { margin: 0; font-size: 16px; }
+.bucket-card p, .future-row p { margin: 6px 0 0; color: #58647a; line-height: 1.6; }
+.bucket-meta { display: grid; gap: 4px; text-align: right; }
+.bucket-meta span, .bucket-meta small { color: #7c879a; font-size: 12px; font-weight: 700; }
+.bucket-meta strong { font-size: clamp(22px, 4vw, 32px); }
+.adjustment-row { grid-template-columns: 1.3fr repeat(3, .8fr); align-items: end; }
+.adjustment-row.price-row { grid-template-columns: 1.3fr .7fr .8fr .8fr .8fr; }
+.future-row { grid-template-columns: 1.3fr .4fr .8fr .8fr .8fr; align-items: end; }
+.future-row label:first-of-type { align-items: center; justify-items: start; }
+input[type="checkbox"] { width: 24px; height: 24px; accent-color: #3056d3; }
+
+@media (max-width: 840px) {
+  .bucket-card, .adjustment-row, .future-row { grid-template-columns: 1fr 1fr; }
+  .bucket-card > div:first-child, .future-row > div:first-child, .adjustment-row > div:first-child { grid-column: 1 / -1; }
+  .bucket-meta { text-align: left; }
+}
+@media (max-width: 520px) {
+  .bucket-card, .adjustment-row, .future-row { grid-template-columns: 1fr; }
+}
+
+  </style>
 </head>
 <body>
   <main class="app">
@@ -94,6 +214,201 @@
       <p>未上場投資の評価額・SBG持分率は手入力のシナリオです。投資判断用ではなく、NAV感応度を素早く見るためのプロトタイプです。</p>
     </section>
   </main>
-  <script src="script.js"></script>
+  <script>
+const navBuckets = [
+  { name: 'Arm', officialValue: 19.15, count: 1, examples: 'Arm Holdings' },
+  { name: 'SVF2', officialValue: 17.19, count: 275, examples: 'OpenAI、PayPay、Databricks、Perplexity、Lenskart、Klarna、Revolut、Wayve、Helion、Symbotic、Swiggy、JD Logistics など' },
+  { name: 'その他', officialValue: 4.61, count: null, examples: 'Alibaba など。FY2025 Q2以降のAlibaba保有株式価値は「その他」に含む想定' },
+  { name: 'SVF1', officialValue: 3.38, count: 52, examples: 'ByteDance、Coupang、DiDi、Grab、OYO、Klook、Delhivery、Auto1、Compass、Aurora、Energy Vault など' },
+  { name: 'SoftBank Corp. / SBKK', officialValue: 2.85, count: 1, examples: 'ソフトバンク株式会社' },
+  { name: 'LatAm Funds', officialValue: 1.04, count: 84, examples: 'Nu、Inter、VTEX、Kavak、Rappi、QuintoAndar、Loggi、Bitso、Uala など' },
+  { name: 'T-Mobile', officialValue: 0.05, count: 1, examples: 'T-Mobile US' },
+];
+
+const marketAdjustments = [
+  { name: 'Arm Holdings', bucket: 'Arm', ticker: 'ARM.US', mode: 'price', currency: 'USD', officialValue: 19.15, currentValue: 19.15, currentPrice: 131.00, sharesHeld: 918.8, officialOwnership: 87.1 },
+  { name: 'SoftBank Corp. / SBKK', bucket: 'SoftBank Corp. / SBKK', ticker: '9434.JP', mode: 'price', currency: 'JPY', officialValue: 2.85, currentValue: 2.85, currentPrice: 149.0, sharesHeld: 19148.581, officialOwnership: 40.10 },
+  { name: 'T-Mobile US', bucket: 'T-Mobile', ticker: 'TMUS.US', mode: 'manual', officialValue: 0.05, currentValue: 0.05 },
+  { name: 'Alibaba', bucket: 'その他', ticker: 'BABA.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
+  { name: 'Coupang', bucket: 'SVF1', ticker: 'CPNG.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
+  { name: 'Grab', bucket: 'SVF1', ticker: 'GRAB.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
+  { name: 'Nu Holdings', bucket: 'LatAm Funds', ticker: 'NU.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
+];
+
+const futureInvestments = [
+  { name: 'OpenAI', bucket: 'SVF2 / strategic', currency: 'USD', reportedValue: 300, ownership: 0, include: true, note: '報道評価額や出資比率を入力して将来NAV感応度を確認' },
+  { name: 'Roze', bucket: 'strategic', currency: 'USD', reportedValue: 0, ownership: 0, include: true, note: '報道・推定値が出たら入力' },
+  { name: 'SB Energy', bucket: 'その他 / strategic', currency: 'JPY', reportedValue: 0, ownership: 0, include: true, note: '円建ての評価額を十億円で入力' },
+  { name: 'Intel', bucket: 'strategic', currency: 'USD', reportedValue: 0, ownership: 0, include: true, note: '株式・転換証券などの想定エクスポージャーを入力' },
+  { name: 'Databricks', bucket: 'SVF2', currency: 'USD', reportedValue: 62, ownership: 0, include: false, note: '任意のSVF2主要未上場枠' },
+  { name: 'Perplexity', bucket: 'SVF2', currency: 'USD', reportedValue: 18, ownership: 0, include: false, note: '任意のSVF2主要未上場枠' },
+];
+
+const els = {
+  status: document.querySelector('#status'),
+  navBuckets: document.querySelector('#navBuckets'),
+  marketAdjustments: document.querySelector('#marketAdjustments'),
+  futureInvestments: document.querySelector('#futureInvestments'),
+  officialDateLabel: document.querySelector('#officialDateLabel'),
+  officialNavPerShare: document.querySelector('#officialNavPerShare'),
+  officialNavTotal: document.querySelector('#officialNavTotal'),
+  officialLtv: document.querySelector('#officialLtv'),
+  officialDiscount: document.querySelector('#officialDiscount'),
+  liveNavPerShare: document.querySelector('#liveNavPerShare'),
+  liveNavTotal: document.querySelector('#liveNavTotal'),
+  futureNavTotal: document.querySelector('#futureNavTotal'),
+  liveDiscount: document.querySelector('#liveDiscount'),
+};
+
+const input = id => document.querySelector(`#${id}`);
+const yen = value => new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 0 }).format(value);
+const pct = value => `${value.toFixed(1)}%`;
+const trillion = value => `${value.toFixed(2)}兆円`;
+const usdJpy = () => Number(input('usdJpy').value);
+
+function marketValue(item) {
+  if (item.mode !== 'price') return item.currentValue;
+  const fx = item.currency === 'USD' ? usdJpy() : 1;
+  return item.sharesHeld * item.currentPrice * fx / 1000000;
+}
+
+function renderNavBuckets() {
+  els.navBuckets.innerHTML = navBuckets.map(bucket => `
+    <article class="bucket-card">
+      <div>
+        <h3>${bucket.name}</h3>
+        <p>${bucket.examples}</p>
+      </div>
+      <div class="bucket-meta">
+        <span>NAV上の価値</span>
+        <strong>${trillion(bucket.officialValue)}</strong>
+        <small>${bucket.count ? `${bucket.count}件を集約` : '公式データシート上の集約枠'}</small>
+      </div>
+    </article>`).join('');
+}
+
+function renderMarketAdjustments() {
+  els.marketAdjustments.innerHTML = marketAdjustments.map((item, i) => {
+    if (item.mode === 'price') {
+      const currentValue = marketValue(item);
+      return `
+    <div class="adjustment-row price-row">
+      <div><h3>${item.name}</h3><div class="meta">${item.bucket} / ${item.ticker} / ${item.currency}</div></div>
+      <label>公式持分率<input readonly value="${item.officialOwnership.toFixed(2)}%"></label>
+      <label>保有株数（百万株）<input readonly value="${item.sharesHeld}"></label>
+      <label>現在株価<input data-kind="market" data-i="${i}" data-k="currentPrice" type="number" step="0.01" value="${item.currentPrice}"></label>
+      <label>現在価値（兆円）<input readonly value="${currentValue.toFixed(2)}"></label>
+    </div>`;
+    }
+
+    return `
+    <div class="adjustment-row manual-row">
+      <div><h3>${item.name}</h3><div class="meta">${item.bucket} / ${item.ticker}</div></div>
+      <label>公式枠内価値（兆円）<input data-kind="market" data-i="${i}" data-k="officialValue" type="number" step="0.01" value="${item.officialValue}"></label>
+      <label>現在価値（兆円）<input data-kind="market" data-i="${i}" data-k="currentValue" type="number" step="0.01" value="${item.currentValue}"></label>
+      <label>差分（兆円）<input readonly value="${(item.currentValue - item.officialValue).toFixed(2)}"></label>
+    </div>`;
+  }).join('');
+}
+
+function renderFutureInvestments() {
+  els.futureInvestments.innerHTML = futureInvestments.map((item, i) => `
+    <div class="future-row">
+      <div>
+        <h3>${item.name}</h3>
+        <div class="meta">${item.bucket} / ${item.currency}</div>
+        <p>${item.note}</p>
+      </div>
+      <label>反映<input data-kind="future" data-i="${i}" data-k="include" type="checkbox" ${item.include ? 'checked' : ''}></label>
+      <label>評価額（${item.currency === 'USD' ? '十億USD' : '十億円'}）<input data-kind="future" data-i="${i}" data-k="reportedValue" type="number" step="0.1" value="${item.reportedValue}"></label>
+      <label>SBG持分率（%）<input data-kind="future" data-i="${i}" data-k="ownership" type="number" step="0.1" value="${item.ownership}"></label>
+      <label>NAV加算（兆円）<input readonly value="${futureValue(item).toFixed(2)}"></label>
+    </div>`).join('');
+}
+
+function futureValue(item) {
+  if (!item.include) return 0;
+  const fx = item.currency === 'USD' ? usdJpy() : 1;
+  return item.reportedValue * (item.ownership / 100) * fx / 1000;
+}
+
+function bindEditableRows() {
+  document.querySelectorAll('[data-kind]').forEach(el => {
+    el.addEventListener('input', updateFromInput);
+    el.addEventListener('change', updateFromInput);
+  });
+}
+
+function updateFromInput(event) {
+  const { kind, i, k } = event.target.dataset;
+  const list = kind === 'market' ? marketAdjustments : futureInvestments;
+  list[Number(i)][k] = event.target.type === 'checkbox' ? event.target.checked : Number(event.target.value);
+  recalculate(false);
+}
+
+function recalculate(rerender = true) {
+  const officialNav = navBuckets.reduce((sum, bucket) => sum + bucket.officialValue, 0);
+  const netDebt = Number(input('netDebt').value) / 1000;
+  const sharesOut = Number(input('sharesOut').value);
+  const sbgPrice = Number(input('sbgPrice').value);
+  const marketDelta = marketAdjustments.reduce((sum, item) => sum + marketValue(item) - item.officialValue, 0);
+  const futureNav = futureInvestments.reduce((sum, item) => sum + futureValue(item), 0);
+  const liveNav = officialNav + marketDelta + futureNav;
+  const officialNavPerShare = officialNav * 1000 * 1000 / sharesOut;
+  const liveNavPerShare = liveNav * 1000 * 1000 / sharesOut;
+  const officialAssetValue = officialNav + netDebt;
+  const officialLtv = netDebt / officialAssetValue * 100;
+  const officialDiscount = (sbgPrice / officialNavPerShare - 1) * 100;
+  const liveDiscount = (sbgPrice / liveNavPerShare - 1) * 100;
+
+  els.officialDateLabel.textContent = input('baseDate').value;
+  els.officialNavPerShare.textContent = `${yen(officialNavPerShare)}円`;
+  els.officialNavTotal.textContent = trillion(officialNav);
+  els.officialLtv.textContent = pct(officialLtv);
+  els.officialDiscount.textContent = pct(officialDiscount);
+  els.liveNavPerShare.textContent = `${yen(liveNavPerShare)}円`;
+  els.liveNavTotal.textContent = trillion(liveNav);
+  els.futureNavTotal.textContent = trillion(futureNav);
+  els.liveDiscount.textContent = pct(liveDiscount);
+
+  if (rerender) {
+    renderMarketAdjustments();
+    renderFutureInvestments();
+    bindEditableRows();
+  }
+}
+
+async function fetchStooq(symbol) {
+  const url = `https://stooq.com/q/l/?s=${encodeURIComponent(symbol.toLowerCase())}&f=sd2t2ohlcv&h&e=csv`;
+  const response = await fetch(url);
+  const text = await response.text();
+  const [, row] = text.trim().split('\n');
+  const cols = row?.split(',') ?? [];
+  const close = Number(cols[6]);
+  if (!Number.isFinite(close)) throw new Error(`${symbol} price unavailable`);
+  return close;
+}
+
+async function fetchPrices() {
+  els.status.textContent = '上場株価を取得中...（現在価値は必要に応じて手入力してください）';
+  try {
+    const usd = await fetchStooq('usdjpy');
+    input('usdJpy').value = usd.toFixed(2);
+  } catch { /* keep manual rate */ }
+  const results = await Promise.all(marketAdjustments.map(async item => {
+    try { const price = await fetchStooq(item.ticker); if (item.mode === 'price') item.currentPrice = price; return `${item.ticker}: 価格取得OK`; }
+    catch { return `${item.ticker}: 手入力`; }
+  }));
+  els.status.textContent = `取得完了: ${results.join(' / ')}（兆円ベースの現在価値へ反映する場合は手入力してください）`;
+  recalculate(true);
+}
+
+renderNavBuckets();
+recalculate();
+document.querySelectorAll('#baseDate, #sharesOut, #netDebt, #sbgPrice, #usdJpy').forEach(el => el.addEventListener('input', () => recalculate()));
+document.querySelector('#fetchPrices').addEventListener('click', fetchPrices);
+document.querySelector('#recalculate').addEventListener('click', () => recalculate());
+
+  </script>
 </body>
 </html>

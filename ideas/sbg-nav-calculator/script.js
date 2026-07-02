@@ -106,7 +106,7 @@ function updateFromInput(event) {
   const { kind, i, k } = event.target.dataset;
   const list = kind === 'market' ? marketAdjustments : futureInvestments;
   list[Number(i)][k] = event.target.type === 'checkbox' ? event.target.checked : Number(event.target.value);
-  recalculate();
+  recalculate(false);
 }
 
 function recalculate(rerender = true) {

@@ -11,9 +11,9 @@
     <section class="hero">
       <p class="eyebrow">SoftBank Group NAV official / live v2</p>
       <h1>公式NAVと現状反映NAVを上下で比較</h1>
-      <p>画面上部にSBG公式発表ベースのNAV、下部に株価・為替を反映したライブ試算NAVを表示します。</p>
+      <p>公式NAVを主要枠に分解し、下部では上場株価・手入力調整・将来NAV予測枠を反映したNAVを試算します。</p>
       <div class="actions">
-        <button id="fetchPrices">最新価格を取得</button>
+        <button id="fetchPrices">上場株価を取得</button>
         <button id="recalculate" class="secondary">NAVを再計算</button>
       </div>
       <p id="status" class="status">official/live v2 初期値を読み込みました。</p>
@@ -39,7 +39,7 @@
       <article class="nav-card live-card">
         <div class="card-heading">
           <p class="eyebrow dark">Live-adjusted NAV</p>
-          <span>株価・為替を現状反映</span>
+          <span>現状反映 + 将来NAV予測</span>
         </div>
         <div class="main-metric">
           <span>現状反映NAV / 株</span>
@@ -47,7 +47,7 @@
         </div>
         <div class="metric-grid">
           <div><span>現状反映NAV総額</span><strong id="liveNavTotal">--</strong></div>
-          <div><span>現状反映LTV</span><strong id="liveLtv">--</strong></div>
+          <div><span>将来NAV予測加算</span><strong id="futureNavTotal">--</strong></div>
           <div><span>SBG株価との乖離</span><strong id="liveDiscount">--</strong></div>
         </div>
       </article>
@@ -57,27 +57,41 @@
       <h2>前提条件</h2>
       <div class="grid form-grid">
         <label>公式NAV日<input id="baseDate" value="2026-03-31"></label>
-        <label>公式NAV/株（円）<input id="baseNavPerShare" type="number" value="7029"></label>
         <label>発行済株式数（百万株）<input id="sharesOut" type="number" value="4260"></label>
         <label>純有利子負債（十億円）<input id="netDebt" type="number" value="6140"></label>
         <label>SBG現在株価（円）<input id="sbgPrice" type="number" value="3555"></label>
         <label>USD/JPY<input id="usdJpy" type="number" step="0.01" value="151.00"></label>
-        <label>EUR/JPY<input id="eurJpy" type="number" step="0.01" value="163.00"></label>
       </div>
     </section>
 
     <section class="panel">
       <div class="section-title">
-        <h2>主要上場持分</h2>
-        <small>株数は百万株、価値は十億円で計算。基準株価=公式NAV日、現在株価=現状反映。</small>
+        <h2>公式NAVに入っている主な枠</h2>
+        <small>SVF1は52件、SVF2は275件、LatAmは84件を全件表示せず、主要枠ごとに集約</small>
       </div>
-      <div id="holdings" class="holdings"></div>
+      <div id="navBuckets" class="bucket-list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <h2>上場株価で現状反映できる項目</h2>
+        <small>取得できない場合は現在価値を手入力してください。価値は兆円。</small>
+      </div>
+      <div id="marketAdjustments" class="adjustment-list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <h2>将来NAV予測枠</h2>
+        <small>未上場・報道評価額・戦略投資を、任意で現状反映NAVへ加算</small>
+      </div>
+      <div id="futureInvestments" class="future-list"></div>
     </section>
 
     <section class="panel note">
       <h2>計算式</h2>
-      <p>公式NAV = 公式NAV/株 × 発行済株式数。現状反映NAVは、公式NAV時点の主要上場持分を基準株価で逆算し、現在株価・為替で更新した差分を反映します。</p>
-      <p>その他資産は公式NAVから逆算して固定します。正確な最新NAVではなく、公式値と現状反映の差を素早く見るためのプロトタイプです。</p>
+      <p>公式NAV = Σ（公式NAV枠の価値）。現状反映NAV = 公式NAV + 上場株価で更新した差分 + 将来NAV予測枠の加算。</p>
+      <p>未上場投資の評価額・SBG持分率は手入力のシナリオです。投資判断用ではなく、NAV感応度を素早く見るためのプロトタイプです。</p>
     </section>
   </main>
   <script src="script.js"></script>

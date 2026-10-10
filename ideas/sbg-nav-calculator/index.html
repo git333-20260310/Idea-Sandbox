@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SBG NAV Official / Live v2</title>
+  <title>SBG NAV Official / Live v3</title>
   <style>
 :root {
   color-scheme: light;
@@ -111,7 +111,7 @@ input {
 .bucket-meta strong { font-size: clamp(22px, 4vw, 32px); }
 .adjustment-row { grid-template-columns: 1.3fr repeat(3, .8fr); align-items: end; }
 .adjustment-row.price-row { grid-template-columns: 1.3fr .7fr .8fr .8fr .8fr; }
-.future-row { grid-template-columns: 1.3fr .4fr .8fr .8fr .8fr; align-items: end; }
+.future-row { grid-template-columns: 1.3fr .4fr .8fr .8fr .8fr .8fr; align-items: end; }
 .future-row label:first-of-type { align-items: center; justify-items: start; }
 input[type="checkbox"] { width: 24px; height: 24px; accent-color: #3056d3; }
 
@@ -129,21 +129,21 @@ input[type="checkbox"] { width: 24px; height: 24px; accent-color: #3056d3; }
 <body>
   <main class="app">
     <section class="hero">
-      <p class="eyebrow">SoftBank Group NAV official / live v2</p>
+      <p class="eyebrow">SoftBank Group NAV official / live v3</p>
       <h1>公式NAVと現状反映NAVを上下で比較</h1>
-      <p>公式NAVを主要枠に分解し、下部では上場株価・手入力調整・将来NAV予測枠を反映したNAVを試算します。</p>
+      <p>最新の公式公表値を上段に固定表示し、下段では資産価値・負債・株数の変更によるNAVを試算します。</p>
       <div class="actions">
-        <button id="fetchPrices">上場株価を取得</button>
+        <button id="fetchPrices">SBG株価・為替を取得</button>
         <button id="recalculate" class="secondary">NAVを再計算</button>
       </div>
-      <p id="status" class="status">official/live v2 初期値を読み込みました。</p>
+      <p id="status" class="status">公式基準：2026年6月30日／公表：2026年8月6日／確認：2026年10月10日。初期値は公式値です。</p>
     </section>
 
     <section class="nav-stack" aria-label="NAV comparison">
       <article class="nav-card official-card">
         <div class="card-heading">
           <p class="eyebrow dark">Official NAV</p>
-          <span id="officialDateLabel">2026-03-31</span>
+          <span id="officialDateLabel">2026-06-30</span>
         </div>
         <div class="main-metric">
           <span>公式NAV / 株</span>
@@ -152,7 +152,7 @@ input[type="checkbox"] { width: 24px; height: 24px; accent-color: #3056d3; }
         <div class="metric-grid">
           <div><span>公式NAV総額</span><strong id="officialNavTotal">--</strong></div>
           <div><span>公式LTV</span><strong id="officialLtv">--</strong></div>
-          <div><span>公式前提の乖離</span><strong id="officialDiscount">--</strong></div>
+          <div><span>6月末株価の乖離（割安はマイナス）</span><strong id="officialDiscount">--</strong></div>
         </div>
       </article>
 
@@ -176,26 +176,26 @@ input[type="checkbox"] { width: 24px; height: 24px; accent-color: #3056d3; }
     <section class="panel">
       <h2>前提条件</h2>
       <div class="grid form-grid">
-        <label>公式NAV日<input id="baseDate" value="2026-03-31"></label>
-        <label>発行済株式数（百万株）<input id="sharesOut" type="number" value="4260"></label>
-        <label>純有利子負債（十億円）<input id="netDebt" type="number" value="6140"></label>
-        <label>SBG現在株価（円）<input id="sbgPrice" type="number" value="3555"></label>
-        <label>USD/JPY<input id="usdJpy" type="number" step="0.01" value="151.00"></label>
+        <label>公式NAV日<input id="baseDate" readonly value="2026-06-30"></label>
+        <label>自己株式を除く株数（百万株・試算用）<input id="sharesOut" type="number" value="5699" min="1"></label>
+        <label>調整後純負債（十億円・試算用）<input id="netDebt" type="number" value="10810"></label>
+        <label>SBG比較株価（円・初期値は6月末）<input id="sbgPrice" type="number" value="5963"></label>
+        <label>USD/JPY<input id="usdJpy" type="number" step="0.01" value="162.39"></label>
       </div>
     </section>
 
     <section class="panel">
       <div class="section-title">
-        <h2>公式NAVに入っている主な枠</h2>
-        <small>SVF1は52件、SVF2は275件、LatAmは84件を全件表示せず、主要枠ごとに集約</small>
+        <h2>公式保有株式価値の内訳</h2>
+        <small>アセットバック・ファイナンス調整後。合計83.11兆円から純負債10.81兆円を控除。</small>
       </div>
       <div id="navBuckets" class="bucket-list"></div>
     </section>
 
     <section class="panel">
       <div class="section-title">
-        <h2>上場株価で現状反映できる項目</h2>
-        <small>取得できない場合は現在価値を手入力してください。価値は兆円。</small>
+        <h2>資産価値の手入力調整</h2>
+        <small>各枠全体の調整後価値を入力（兆円）。旧株数に基づく株価自動換算は使用しません。</small>
       </div>
       <div id="marketAdjustments" class="adjustment-list"></div>
     </section>
@@ -203,45 +203,130 @@ input[type="checkbox"] { width: 24px; height: 24px; accent-color: #3056d3; }
     <section class="panel">
       <div class="section-title">
         <h2>将来NAV予測枠</h2>
-        <small>未上場・報道評価額・戦略投資を、任意で現状反映NAVへ加算</small>
+        <small>公式値には加算しません。既存投資は公式計上済み価値を引いた差分だけを加算。初期状態は全てOFF。</small>
       </div>
       <div id="futureInvestments" class="future-list"></div>
     </section>
 
     <section class="panel note">
       <h2>計算式</h2>
-      <p>公式NAV = Σ（公式NAV枠の価値）。現状反映NAV = 公式NAV + 上場株価で更新した差分 + 将来NAV予測枠の加算。</p>
-      <p>未上場投資の評価額・SBG持分率は手入力のシナリオです。投資判断用ではなく、NAV感応度を素早く見るためのプロトタイプです。</p>
+      <p>公式NAV = 保有株式価値83.11兆円 − 調整後純負債10.81兆円 = 72.30兆円。試算NAV = 83.11兆円 + 資産価値の差分 + 将来枠の差分 − 試算用純負債。</p>
+      <p>公式出典：<a href="https://group.softbank/ir/stock/sotp" target="_blank" rel="noopener">SBG公式「1株当たりNAV情報」</a>（2026年6月末）。1株NAVは公表された丸め済みNAVと株数から算出した約12,686円。内訳合計83.10兆円と公表合計83.11兆円の0.01兆円差は丸め差です。Armは53.13−3.22、SBKKは3.98−1.20、Tモバイルは0.27−0.27兆円（各公表値は丸め済み）。<br>確認日：2026年10月10日。次回決算予定：2026年11月10日。公式基準は四半期の公表値で、10月の株価や追加投資は自動反映されません。</p>
     </section>
   </main>
   <script>
+const official = Object.freeze({ date: '2026-06-30', assets: 83.11, debt: 10.81, shares: 5699, price: 5963, ltv: 13.0 });
 const navBuckets = [
-  { name: 'Arm', officialValue: 19.15, count: 1, examples: 'Arm Holdings' },
-  { name: 'SVF2', officialValue: 17.19, count: 275, examples: 'OpenAI、PayPay、Databricks、Perplexity、Lenskart、Klarna、Revolut、Wayve、Helion、Symbotic、Swiggy、JD Logistics など' },
-  { name: 'その他', officialValue: 4.61, count: null, examples: 'Alibaba など。FY2025 Q2以降のAlibaba保有株式価値は「その他」に含む想定' },
-  { name: 'SVF1', officialValue: 3.38, count: 52, examples: 'ByteDance、Coupang、DiDi、Grab、OYO、Klook、Delhivery、Auto1、Compass、Aurora、Energy Vault など' },
-  { name: 'SoftBank Corp. / SBKK', officialValue: 2.85, count: 1, examples: 'ソフトバンク株式会社' },
-  { name: 'LatAm Funds', officialValue: 1.04, count: 84, examples: 'Nu、Inter、VTEX、Kavak、Rappi、QuintoAndar、Loggi、Bitso、Uala など' },
-  { name: 'T-Mobile', officialValue: 0.05, count: 1, examples: 'T-Mobile US' },
+  {
+    "name": "Arm",
+    "officialValue": 49.91,
+    "count": null,
+    "examples": "Arm Holdings（アセットバック・ファイナンス調整後）"
+  },
+  {
+    "name": "SVF2",
+    "officialValue": 19.29,
+    "count": null,
+    "examples": "SVF2のNAVに対するSBG持分等（OpenAIなどを含む）"
+  },
+  {
+    "name": "その他",
+    "officialValue": 6.51,
+    "count": null,
+    "examples": "その他の上場・非上場株式等"
+  },
+  {
+    "name": "SVF1",
+    "officialValue": 3.6,
+    "count": null,
+    "examples": "SVF1のNAVに対するSBG持分・成功報酬見込み等"
+  },
+  {
+    "name": "SoftBank Corp. / SBKK",
+    "officialValue": 2.79,
+    "count": null,
+    "examples": "ソフトバンク株式会社（アセットバック・ファイナンス調整後）"
+  },
+  {
+    "name": "LatAm Funds",
+    "officialValue": 1,
+    "count": null,
+    "examples": "LatAmファンドのNAVに対するSBG持分等"
+  },
+  {
+    "name": "T-Mobile",
+    "officialValue": 0,
+    "count": null,
+    "examples": "T-Mobile US（カラー契約調整後）"
+  }
 ];
 
 const marketAdjustments = [
-  { name: 'Arm Holdings', bucket: 'Arm', ticker: 'ARM.US', mode: 'price', currency: 'USD', officialValue: 19.15, currentValue: 19.15, currentPrice: 131.00, sharesHeld: 918.8, officialOwnership: 87.1 },
-  { name: 'SoftBank Corp. / SBKK', bucket: 'SoftBank Corp. / SBKK', ticker: '9434.JP', mode: 'price', currency: 'JPY', officialValue: 2.85, currentValue: 2.85, currentPrice: 149.0, sharesHeld: 19148.581, officialOwnership: 40.10 },
-  { name: 'T-Mobile US', bucket: 'T-Mobile', ticker: 'TMUS.US', mode: 'manual', officialValue: 0.05, currentValue: 0.05 },
-  { name: 'Alibaba', bucket: 'その他', ticker: 'BABA.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
-  { name: 'Coupang', bucket: 'SVF1', ticker: 'CPNG.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
-  { name: 'Grab', bucket: 'SVF1', ticker: 'GRAB.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
-  { name: 'Nu Holdings', bucket: 'LatAm Funds', ticker: 'NU.US', mode: 'manual', officialValue: 0.00, currentValue: 0.00 },
+  {
+    "name": "Arm",
+    "bucket": "Arm",
+    "ticker": "枠全体",
+    "mode": "manual",
+    "officialValue": 49.91,
+    "currentValue": 49.91
+  },
+  {
+    "name": "SVF2",
+    "bucket": "SVF2",
+    "ticker": "枠全体",
+    "mode": "manual",
+    "officialValue": 19.29,
+    "currentValue": 19.29
+  },
+  {
+    "name": "その他",
+    "bucket": "その他",
+    "ticker": "枠全体",
+    "mode": "manual",
+    "officialValue": 6.51,
+    "currentValue": 6.51
+  },
+  {
+    "name": "SVF1",
+    "bucket": "SVF1",
+    "ticker": "枠全体",
+    "mode": "manual",
+    "officialValue": 3.6,
+    "currentValue": 3.6
+  },
+  {
+    "name": "SoftBank Corp. / SBKK",
+    "bucket": "SoftBank Corp. / SBKK",
+    "ticker": "枠全体",
+    "mode": "manual",
+    "officialValue": 2.79,
+    "currentValue": 2.79
+  },
+  {
+    "name": "LatAm Funds",
+    "bucket": "LatAm Funds",
+    "ticker": "枠全体",
+    "mode": "manual",
+    "officialValue": 1,
+    "currentValue": 1
+  },
+  {
+    "name": "T-Mobile",
+    "bucket": "T-Mobile",
+    "ticker": "枠全体",
+    "mode": "manual",
+    "officialValue": 0,
+    "currentValue": 0
+  }
 ];
 
 const futureInvestments = [
-  { name: 'OpenAI', bucket: 'SVF2 / strategic', currency: 'USD', reportedValue: 300, ownership: 0, include: true, note: '報道評価額や出資比率を入力して将来NAV感応度を確認' },
-  { name: 'Roze', bucket: 'strategic', currency: 'USD', reportedValue: 0, ownership: 0, include: true, note: '報道・推定値が出たら入力' },
-  { name: 'SB Energy', bucket: 'その他 / strategic', currency: 'JPY', reportedValue: 0, ownership: 0, include: true, note: '円建ての評価額を十億円で入力' },
-  { name: 'Intel', bucket: 'strategic', currency: 'USD', reportedValue: 0, ownership: 0, include: true, note: '株式・転換証券などの想定エクスポージャーを入力' },
-  { name: 'Databricks', bucket: 'SVF2', currency: 'USD', reportedValue: 62, ownership: 0, include: false, note: '任意のSVF2主要未上場枠' },
-  { name: 'Perplexity', bucket: 'SVF2', currency: 'USD', reportedValue: 18, ownership: 0, include: false, note: '任意のSVF2主要未上場枠' },
+  { name: 'OpenAI', bucket: 'SVF2 / strategic', currency: 'USD', reportedValue: 0, ownership: 0, baselineValue: 0, include: false, note: '報道評価額や出資比率を入力して将来NAV感応度を確認' },
+  { name: 'Roze', bucket: 'strategic', currency: 'USD', reportedValue: 0, ownership: 0, baselineValue: 0, include: false, note: '報道・推定値が出たら入力' },
+  { name: 'SB Energy', bucket: 'その他 / strategic', currency: 'JPY', reportedValue: 0, ownership: 0, baselineValue: 0, include: false, note: '円建ての評価額を十億円で入力' },
+  { name: 'Intel', bucket: 'strategic', currency: 'USD', reportedValue: 0, ownership: 0, baselineValue: 0, include: false, note: '株式・転換証券などの想定エクスポージャーを入力' },
+  { name: 'Databricks', bucket: 'SVF2', currency: 'USD', reportedValue: 0, ownership: 0, baselineValue: 0, include: false, note: '任意のSVF2主要未上場枠' },
+  { name: 'Perplexity', bucket: 'SVF2', currency: 'USD', reportedValue: 0, ownership: 0, baselineValue: 0, include: false, note: '任意のSVF2主要未上場枠' },
 ];
 
 const els = {
@@ -322,14 +407,15 @@ function renderFutureInvestments() {
       <label>反映<input data-kind="future" data-i="${i}" data-k="include" type="checkbox" ${item.include ? 'checked' : ''}></label>
       <label>評価額（${item.currency === 'USD' ? '十億USD' : '十億円'}）<input data-kind="future" data-i="${i}" data-k="reportedValue" type="number" step="0.1" value="${item.reportedValue}"></label>
       <label>SBG持分率（%）<input data-kind="future" data-i="${i}" data-k="ownership" type="number" step="0.1" value="${item.ownership}"></label>
-      <label>NAV加算（兆円）<input readonly value="${futureValue(item).toFixed(2)}"></label>
+      <label>公式計上済み価値（兆円）<input data-kind="future" data-i="${i}" data-k="baselineValue" type="number" step="0.01" value="${item.baselineValue}"></label>
+      <label>NAV差分（兆円）<input readonly value="${futureValue(item).toFixed(2)}"></label>
     </div>`).join('');
 }
 
 function futureValue(item) {
   if (!item.include) return 0;
   const fx = item.currency === 'USD' ? usdJpy() : 1;
-  return item.reportedValue * (item.ownership / 100) * fx / 1000;
+  return item.reportedValue * (item.ownership / 100) * fx / 1000 - item.baselineValue;
 }
 
 function bindEditableRows() {
@@ -344,24 +430,30 @@ function updateFromInput(event) {
   const list = kind === 'market' ? marketAdjustments : futureInvestments;
   list[Number(i)][k] = event.target.type === 'checkbox' ? event.target.checked : Number(event.target.value);
   recalculate(false);
+  const row = event.target.closest('.adjustment-row, .future-row');
+  if (row) {
+    const output = row.querySelector('label:last-child input');
+    const item = list[Number(i)];
+    if (output) output.value = (kind === 'market' ? marketValue(item) - item.officialValue : futureValue(item)).toFixed(2);
+  }
 }
 
 function recalculate(rerender = true) {
-  const officialNav = navBuckets.reduce((sum, bucket) => sum + bucket.officialValue, 0);
+  const officialNav = official.assets - official.debt;
   const netDebt = Number(input('netDebt').value) / 1000;
   const sharesOut = Number(input('sharesOut').value);
   const sbgPrice = Number(input('sbgPrice').value);
   const marketDelta = marketAdjustments.reduce((sum, item) => sum + marketValue(item) - item.officialValue, 0);
   const futureNav = futureInvestments.reduce((sum, item) => sum + futureValue(item), 0);
-  const liveNav = officialNav + marketDelta + futureNav;
-  const officialNavPerShare = officialNav * 1000 * 1000 / sharesOut;
+  const liveNav = official.assets - netDebt + marketDelta + futureNav;
+  const officialNavPerShare = officialNav * 1000 * 1000 / official.shares;
   const liveNavPerShare = liveNav * 1000 * 1000 / sharesOut;
-  const officialAssetValue = officialNav + netDebt;
-  const officialLtv = netDebt / officialAssetValue * 100;
-  const officialDiscount = (sbgPrice / officialNavPerShare - 1) * 100;
+  const officialAssetValue = official.assets;
+  const officialLtv = official.ltv;
+  const officialDiscount = (official.price / officialNavPerShare - 1) * 100;
   const liveDiscount = (sbgPrice / liveNavPerShare - 1) * 100;
 
-  els.officialDateLabel.textContent = input('baseDate').value;
+  els.officialDateLabel.textContent = official.date;
   els.officialNavPerShare.textContent = `${yen(officialNavPerShare)}円`;
   els.officialNavTotal.textContent = trillion(officialNav);
   els.officialLtv.textContent = pct(officialLtv);
@@ -385,21 +477,19 @@ async function fetchStooq(symbol) {
   const [, row] = text.trim().split('\n');
   const cols = row?.split(',') ?? [];
   const close = Number(cols[6]);
-  if (!Number.isFinite(close)) throw new Error(`${symbol} price unavailable`);
+  if (!response.ok || !Number.isFinite(close) || close <= 0) throw new Error(`${symbol} price unavailable`);
   return close;
 }
 
 async function fetchPrices() {
-  els.status.textContent = '上場株価を取得中...（現在価値は必要に応じて手入力してください）';
-  try {
-    const usd = await fetchStooq('usdjpy');
-    input('usdJpy').value = usd.toFixed(2);
-  } catch { /* keep manual rate */ }
-  const results = await Promise.all(marketAdjustments.map(async item => {
-    try { const price = await fetchStooq(item.ticker); if (item.mode === 'price') item.currentPrice = price; return `${item.ticker}: 価格取得OK`; }
-    catch { return `${item.ticker}: 手入力`; }
+  els.status.textContent = 'SBG株価・為替を取得中（外部参考値）...';
+  const results = await Promise.all([
+    ['usdjpy', 'usdJpy', '為替'], ['9984.JP', 'sbgPrice', 'SBG株価']
+  ].map(async ([symbol, id, label]) => {
+    try { input(id).value = (await fetchStooq(symbol)).toFixed(2); return label + ': 取得済み（最新利用可能な終値）'; }
+    catch { return label + ': 取得不可・入力値を維持'; }
   }));
-  els.status.textContent = `取得完了: ${results.join(' / ')}（兆円ベースの現在価値へ反映する場合は手入力してください）`;
+  els.status.textContent = results.join(' / ') + '。資産価値は手入力で更新してください。';
   recalculate(true);
 }
 
